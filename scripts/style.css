@@ -1,0 +1,46 @@
+@CHARSET "ISO-8859-1";
+
+.generaltable tr.r1.attended,.generaltable tr.r0.attended{
+	color:#017003;
+}
+
+.small_font{
+	font-size:150%;
+}
+
+.generaltable th{
+	cursor:pointer;
+}
+
+.generaltable th.lastcol{
+	cursor:default;
+}
+
+.generaltable th.headerSortUp{
+	background-color:#e9fbff;
+	background-image:url(images/sortUp.png);
+	background-position:right center;
+	background-repeat:no-repeat;
+	
+}
+
+.generaltable th.headerSortDown{
+	background-color:#e9fbff;
+	background-image:url(images/sortDown.png);
+	background-position:right center;
+	background-repeat:no-repeat;
+}
+
+#filter{
+	font-weight:bold;
+	font-size:14px;
+	float:left;
+}
+
+#filter input{
+	width:145px;
+}
+
+#fgroup_id_actionGroup{
+	float:right;	
+}
