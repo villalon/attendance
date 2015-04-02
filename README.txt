@@ -3,9 +3,9 @@ attendance for Moodle 2.8.3+ or more
 Version: 1.0.0
 ------------------------------------------
 
-Author: Juan Pablo Baltra
+Author: Martin Amestica 
 Developers: Juan Pablo Baltra
-            Martin Amestica Montenegro
+            Dario Pfeng            
 
 ------------------------------------------
 
@@ -34,14 +34,68 @@ list of studiens in one session.
 - Settings:
 
 	- Create necessary permissions (are explained in “capabilities types”): 
-site administration->user->permissions->define roles.
+		site administration->user->permissions->define roles.
  
-	- Is needed the UAI block to see the pluggin in the home page, 
-	in this point we have to visualizations, first that the teacher saw and this
-	is the link to create a new session or close old sessions and the posibility of
-	see the records of other sessions, and the second visualization is
-	the student vision and in this way he see the option to check his attendance.
+	- Is needed a block tu use the pluggin in the correct way.
+	First is necessary create the configurations of this pluggin in the block, for this 
+	you create a function with pluggin name and define the navigation nodes in the block.
 	
+	for example:
+	
+		function attendance() {
+			global $COURSE, $CFG, $PAGE, $USER, $DB;
+
+			return;
+			$context = context_course::instance($COURSE->id);
+			$rootnode = navigation_node::create(get_string('attendances', 'local_attendance'));
+		
+	- Then is necessary config the nodes according the course id, the home page have courseid 1 
+	and other course have  id iqual 2 or more.
+	
+	
+	for example:
+	
+		if($COURSE->id == 1){
+			$nodemark = navigation_node::create(
+					get_string('markattendance', 'local_attendance'),
+					new moodle_url("/local/attendance/markattendance.php",array("courseid"=>$COURSE->id)),
+					navigation_node::TYPE_CUSTOM, null, null,
+					new pix_icon('i/report', 'markattendance'));
+			
+			$rootnode->add_node($nodemark);
+}
+
+     - Links for specific rol and course:
+
+		Home page:
+	
+			Teacher/Student: new moodle_url("/local/attendance/markattendance.php",array("courseid"=>$COURSE->id))
+	
+		Course page:is necesary to config the capabilities restrictions
+	
+			example: if(has_capability('local/attendance:teacherview', $context))
+	
+		Now if the user has the capability he will be have this links:
+	
+			* create attendance session: new moodle_url("/local/attendance/attendance.php",array("courseid"=>$COURSE->id))
+			* view students records: new moodle_url("/local/attendance/viewstudentrecord.php",array("courseid"=>$COURSE->id))
+	
+		else:
+	
+			*student mark attendence: new moodle_url("/local/attendance/studentrecord.php",array("courseid"=>$COURSE->id))
+	
+
+	  - Finally is nedded to add the nodes to the page for see the attendance functions in the block.
+	
+	
+		for example:
+	
+	 		if($nodeattendance = $this->attendance())
+				$root->add_node($nodeattandance);
+			
+			
+			
+			
 - Capabilities types: 
 
 	* teacherview - teacher can be see the option to create sessions.
@@ -52,7 +106,7 @@ site administration->user->permissions->define roles.
 */local/attendance/forms.php -  file containing all the forms used
 */local/attendance/lib.php - file that contains lib
 */local/attendance/markattendance.php - check the attendance
-*/local/attendance/studentrecord.php
+*/local/attendance/studentrecord.php - attendance student record
 */local/attendance/tables.php - file that contains tables
 */local/attendance/version.php - version of script (must be incremented after changes)
 */local/attendance/viewsessionrecord.php - see all sessions created
@@ -63,10 +117,10 @@ site administration->user->permissions->define roles.
 */local/attendance/db/upgrade.php - executed after version.php change
 */local/attendance/lang/en/local_attendance.php - english language file
 */local/attendance/lang/es/local_attendance.php - spanish language file
-*/local/attendance/webapp/student/index.php
-*/local/attendance/webapp/student/markAttendance.php
-*/local/attendance/webapp/teacher/index.php
-*/local/attendance/webapp/teacher/markAttendance.php
+*/local/attendance/webapp/student/index.php - index page
+*/local/attendance/webapp/student/markAttendance.php - student web version
+*/local/attendance/webapp/teacher/index.php - index page
+*/local/attendance/webapp/teacher/markAttendance.php - teacher web version
 
 
 	
