@@ -9,7 +9,7 @@ Developers: Juan Pablo Baltra
 
 ------------------------------------------
 
-- Functions:
+- Functions in attendance pluggin:
 
 * attendance.php:
 
