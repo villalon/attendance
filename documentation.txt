@@ -1,0 +1,62 @@
+------------------------------------------
+attendance for Moodle 2.8.3+ or more
+Version: 1.0.0
+------------------------------------------
+
+Author: Martin Amestica 
+Developers: Juan Pablo Baltra
+            Dario Pfeng            
+
+------------------------------------------
+
+- Functions:
+
+* attendance.php:
+
+	** openSession(): Is a form that you use to creates a new attendance session with param like
+	                 duration and session name.
+	 
+	** getCourseStudents(): Is a function that creates a table with students info (firs and last name) 
+	                       and they attendance status in a specific attendance session.
+
+* markattendance.php:
+
+	** getOpenSessions(): Is a function that creates a table with opens attendance sessions and bottons 
+	                     for mark this attendance in this sessions.
+	                     
+
+* studentrecord.php:
+
+	**	getStudentHistory(): Is a function that creates a table with student attendance record info like 
+	                         date, hour, session name and attendance state.
+	                         
+* viewsessionrecord.php:
+
+	** getAssistByDate(): Is a function that creates a table with attendance records by dates session.
+	
+	** actionsForSession(): Is a function that creates a form about multiselect students and change the 
+	                        state of attendances.
+	
+	** getAssistDateDetail(): Is a function that creates a table with students info and 
+	                          attendance state for any student in one specific session.
+	                         
+* viewstudentrecord.php:
+
+	** getAssistByStudent: Is a function that creates a table with attendance record by student info
+	                       like first and last name and percentage of attendances.     
+	                       
+	** actionsForStudent(): Is a function that creates a form about multiselect attendance sessions
+	                        and change tha state of attendances.
+	                       
+	** getAssistStudentDetail(): Is a function that creates a table with attendance info for one specific student
+	                             and all his sessions with date, hour and name of session in addition to states 
+	                             of this session.                                                                 	                                                              
+	
+*Others:
+
+	** getOpenSessionsWebapp(): Is a function that creates a tables with open attendance session.
+	
+	** local_attendance_cron(): Is a function that create a cron that review every sesson and verify if
+	                            is open or close, in case that the session is open this cron close it.
+	                            
+	** webapp(): Is a function that creates a form for user can be loggin.                
