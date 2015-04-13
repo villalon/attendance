@@ -56,8 +56,8 @@ class tables{
 		$table = new html_table();
 		$table->head = array(get_string('course','local_attendance'),"");
 		foreach($sessions as $session){
-			$sessionContext = context_course::instance($session->id);
-			if(!has_capability('local/attendance:teacherview', $sessionContext)){
+			$sessioncontext = context_course::instance($session->id);
+			if(!has_capability('local/attendance:teacherview', $sessioncontext)){
 			$attended = $DB->record_exists('local_attendance_attendance',array('sessionid'=>$session->sessionid,'userid'=>$session->userid));
 			$button = ($attended) ? get_string('attendancemarked', 'local_attendance') : $OUTPUT->single_button(new moodle_url('markattendance.php',array('action'=>'mark_attendance','courseid'=>$session->id)), get_string('markattendance', 'local_attendance'));
 			$table->data[]= array($session->fullname,$button);
@@ -76,15 +76,15 @@ class tables{
 		foreach($sessions as $session){
 		$attended = $DB->record_exists('local_attendance_attendance',array('sessionid'=>$session->id,'userid'=>$USER->id));
 		$attendance = ($attended) ? get_string('attendant', 'local_attendance') : get_string('absent', 'local_attendance'); 
-		$cellClass = ($attended) ? 'green' : 'red';
-		$attendanceCell = new html_table_cell($attendance);
-		$attendanceCell->attributes['class'] = $cellClass;
+		$cellclass = ($attended) ? 'green' : 'red';
+		$attendancecell = new html_table_cell($attendance);
+		$attendancecell->attributes['class'] = $cellclass;
 		if($session->comment != NULL){
 			$name = $session->comment;
 		}else{
 			$name = get_string('noname', 'local_attendance');
 		}
-		$table->data[]= array('<input type="hidden" value="'.$session->date.'">'.date('d/m/Y',$session->date),date('H:i',$session->date),$name, $attendanceCell);
+		$table->data[]= array('<input type="hidden" value="'.$session->date.'">'.date('d/m/Y',$session->date),date('H:i',$session->date),$name, $attendancecell);
 	}
 		return $table;
 	
@@ -122,7 +122,7 @@ class tables{
 		$sessions = $DB->get_records('local_attendance_session',array('courseid'=>$courseid,'open'=>0));
 		$table = new html_table();
 		$table->head = array(get_string('date', 'local_attendance'),get_string('hour','local_attendance'),get_string('sessionname','local_attendance'), get_string('attendance', 'local_attendance'), get_string('options', 'local_attendance'));
-		$totalStudents = $DB->get_record_sql('SELECT count(u.id) as total FROM {user} as u 
+		$totalstudents = $DB->get_record_sql('SELECT count(u.id) as total FROM {user} as u 
 				INNER JOIN {user_enrolments} as ue ON (ue.userid = u.id) 
 				INNER JOIN {enrol} as e ON (e.id = ue.enrolid) 
 				INNER JOIN {course} as c ON (e.courseid = c.id) 
@@ -130,21 +130,21 @@ class tables{
 				AND u.id IN (SELECT u.id FROM {course} c LEFT OUTER JOIN {context} cx ON c.id = cx.instanceid LEFT OUTER JOIN {role_assignments} ra ON cx.id = ra.contextid AND ra.roleid = "5" LEFT OUTER JOIN {user} u ON ra.userid = u.id WHERE cx.contextlevel = "50" and c.id = '.$courseid.')
 				ORDER BY u.lastname'
 				);
-		$detailIcon = new pix_icon('i/preview', get_string('detail','local_attendance'));
-		$deleteIcon = new pix_icon('t/delete', get_string('delete','local_attendance'));
+		$detailicon = new pix_icon('i/preview', get_string('detail','local_attendance'));
+		$deleteicon = new pix_icon('t/delete', get_string('delete','local_attendance'));
 		foreach($sessions as $session){
-			$deleteUrl =  new moodle_url('/local/attendance/viewsessionrecord.php', array('action'=>'delete_session', 'courseid'=>$courseid, 'sessionid'=>$session->id));
-			$detailUrl =  new moodle_url('/local/attendance/viewsessionrecord.php', array('action'=>'view_session_details', 'courseid'=>$courseid, 'sessionid'=>$session->id));
-			$detailButton = $OUTPUT->action_icon($detailUrl, $detailIcon);
-			$deleteButton = $OUTPUT->action_icon($deleteUrl ,$deleteIcon, new confirm_action(get_string('deletesession', 'local_attendance')));
-			$attendedStudents = $DB->count_records('local_attendance_attendance',array("sessionid"=>$session->id));
-			$percentage = round(100*$attendedStudents/$totalStudents->total);
+			$deleteurl =  new moodle_url('/local/attendance/viewsessionrecord.php', array('action'=>'delete_session', 'courseid'=>$courseid, 'sessionid'=>$session->id));
+			$detailurl =  new moodle_url('/local/attendance/viewsessionrecord.php', array('action'=>'view_session_details', 'courseid'=>$courseid, 'sessionid'=>$session->id));
+			$detailbutton = $OUTPUT->action_icon($detailurl, $detailicon);
+			$deletebutton = $OUTPUT->action_icon($deleteurl ,$deleteicon, new confirm_action(get_string('deletesession', 'local_attendance')));
+			$attendedstudents = $DB->count_records('local_attendance_attendance',array("sessionid"=>$session->id));
+			$percentage = round(100*$attendedstudents/$totalstudents->total);
 			if($session->comment != NULL){
 				$name = $session->comment;
 			}else{
 				$name = get_string('noname', 'local_attendance');
 			}
-			$table->data[]= array('<input type="hidden" value="'.$session->date.'">'.date('d/m/Y',$session->date),date('H:i', $session->date), $name, $percentage.'%', $detailButton . $deleteButton);
+			$table->data[]= array('<input type="hidden" value="'.$session->date.'">'.date('d/m/Y',$session->date),date('H:i', $session->date), $name, $percentage.'%', $detailbutton . $deletebutton);
 		}
 	return $table;
 	}
@@ -158,16 +158,16 @@ class tables{
 		foreach($sessions as $session){
 			$attended = $DB->record_exists('local_attendance_attendance',array('sessionid'=>$session->id,'userid'=>$userid));
 			$attendance = ($attended) ? get_string('attendant', 'local_attendance') : get_string('absent', 'local_attendance');
-			$cellClass = ($attended) ? 'green' : 'red';
+			$cellclass = ($attended) ? 'green' : 'red';
 			$checkbox = '<input type="checkbox" name="sessions[]" value="'.$session->id.'">';
 			if($session->comment != NULL){
 				$name = $session->comment;
 			}else{
 				$name = get_string('noname','local_attendance');
 			}
-			$attendanceCell = new html_table_cell($attendance);
-			$attendanceCell->attributes['class'] = $cellClass;
-			$table->data[]= array('<input type="hidden" value="'.$session->date.'">'.date('d/m/Y',$session->date),date('H:i',$session->date),$name, $attendanceCell, $checkbox);
+			$attendancecell = new html_table_cell($attendance);
+			$attendancecell->attributes['class'] = $cellclass;
+			$table->data[]= array('<input type="hidden" value="'.$session->date.'">'.date('d/m/Y',$session->date),date('H:i',$session->date),$name, $attendancecell, $checkbox);
 		}
 	return $table;
 	}
@@ -189,11 +189,11 @@ class tables{
 		foreach($students as $student){
 			$attended = $DB->record_exists('local_attendance_attendance', array('sessionid'=>$sessionid,'userid'=>$student->id));
 			$attendance = ($attended) ? get_string('attendant', 'local_attendance') : get_string('absent', 'local_attendance');
-			$cellClass = ($attended) ? 'green' : 'red';
+			$cellclass = ($attended) ? 'green' : 'red';
 			$checkbox = '<input type="checkbox" name="students[]" value="'.$student->id.'">';
-			$attendanceCell = new html_table_cell($attendance);
-			$attendanceCell->attributes['class'] = $cellClass;
-			$table->data[]= array($student->lastname,$student->firstname, $attendanceCell,$checkbox);
+			$attendancecell = new html_table_cell($attendance);
+			$attendancecell->attributes['class'] = $cellclass;
+			$table->data[]= array($student->lastname,$student->firstname, $attendancecell,$checkbox);
 		}
 	return $table;
 	
@@ -205,11 +205,11 @@ class tables{
 		$table = new html_table();
 		$table->head = array(get_string('course','local_attendance'),"");
 		foreach($sessions as $session){
-			$sessionContext = context_course::instance($session->id);
-			$loadImage = '<img class="loader" src="scripts/images/loader.gif">';
-			if(!has_capability('local/attendance:teacherview', $sessionContext, $_SESSION['user_webapp']->id)){
+			$sessioncontext = context_course::instance($session->id);
+			$loadimage = '<img class="loader" src="scripts/images/loader.gif">';
+			if(!has_capability('local/attendance:teacherview', $sessioncontext, $_SESSION['user_webapp']->id)){
 				$attended = $DB->record_exists('local_attendance_attendance',array('sessionid'=>$session->sessionid,'userid'=>$session->userid));
-				$button = ($attended) ? get_string('attendancemarked', 'local_attendance') : $loadImage.$OUTPUT->single_button(new moodle_url('markattendance.php',array('action'=>'mark_attendance','courseid'=>$session->id)), get_string('markattendance', 'local_attendance'));
+				$button = ($attended) ? get_string('attendancemarked', 'local_attendance') : $loadimage.$OUTPUT->single_button(new moodle_url('markattendance.php',array('action'=>'mark_attendance','courseid'=>$session->id)), get_string('markattendance', 'local_attendance'));
 				$table->data[]= array($session->fullname,$button);
 			}
 		}
